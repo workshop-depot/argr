@@ -66,3 +66,23 @@ func TestWithUnicode(t *testing.T) {
 	assert.Equal(sv1, argv.z)
 	assert.Equal(sv1, argv.zz)
 }
+
+func TestSpace(t *testing.T) {
+	assert := assert.New(t)
+	sv1 := "with     space"
+	input := "    -str    \"%v\"        -num    10   "
+	input = fmt.Sprintf(input, sv1)
+	parts := Tokenize(input)
+
+	var argv struct {
+		num int
+		str string
+	}
+	set := flag.NewFlagSet("", flag.ExitOnError)
+	set.StringVar(&argv.str, "str", "N/A", "")
+	set.IntVar(&argv.num, "num", -1, "")
+	assert.NoError(set.Parse(parts))
+
+	assert.Equal(sv1, argv.str)
+	assert.Equal(10, argv.num)
+}
