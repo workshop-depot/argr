@@ -3,6 +3,7 @@ package argr
 import (
 	"flag"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -83,6 +84,27 @@ func TestSpace(t *testing.T) {
 	set.IntVar(&argv.num, "num", -1, "")
 	assert.NoError(set.Parse(parts))
 
+	assert.Equal(sv1, argv.str)
+	assert.Equal(10, argv.num)
+}
+
+func TestTripleQuotes(t *testing.T) {
+	assert := assert.New(t)
+	sv1 := "multi\nline\n\\\"text"
+	input := `    -str    """%v"""        -num    10   `
+	input = fmt.Sprintf(input, sv1)
+	parts := Tokenize(input)
+
+	var argv struct {
+		num int
+		str string
+	}
+	set := flag.NewFlagSet("", flag.ExitOnError)
+	set.StringVar(&argv.str, "str", "N/A", "")
+	set.IntVar(&argv.num, "num", -1, "")
+	assert.NoError(set.Parse(parts))
+
+	sv1 = strings.Replace(sv1, "\\\"", `"`, -1)
 	assert.Equal(sv1, argv.str)
 	assert.Equal(10, argv.num)
 }

@@ -25,6 +25,9 @@ func Tokenize(str string) []string {
 				v = strings.Replace(v, `\"`, `"`, -1)
 			}
 		}
+		if strings.HasPrefix(v, `""`) && strings.HasSuffix(v, `""`) {
+			v = strings.Trim(v, `"`)
+		}
 		if v == "" {
 			continue
 		}
